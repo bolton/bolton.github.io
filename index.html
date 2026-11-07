@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rob Bolton</title>
+<meta name="description" content="Rob Bolton works in AI and, on the side, builds beExploring, a Pacific Northwest trip planner, and open source outdoor widgets from Lake Chelan, Washington.">
+<meta name="theme-color" content="#0f1210">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Rob Bolton">
+<meta property="og:description" content="Small, useful things for people who go outside: beExploring, the NWS forecast widget and the WA campfire badge.">
+<meta property="og:url" content="https://bolton.github.io/">
+<meta property="og:image" content="https://www.beexploring.com/media/img/explore/about/skiing-400.jpg">
+<link rel="canonical" href="https://bolton.github.io/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230f1210'/%3E%3Cpath d='M4 25 13 10l5 8 3-4 7 11z' fill='%238fd19e'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f1210;
+    --bg-2: #161a17;
+    --line: #26302a;
+    --text: #e7ebe6;
+    --muted: #93a197;
+    --accent: #8fd19e;
+    --accent-2: #e8b264;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  body { background: var(--bg); color: var(--text); font: 17px/1.65 Inter, system-ui, sans-serif; }
+  a { color: inherit; }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 24px; }
+
+  header { position: relative; overflow: hidden; border-bottom: 1px solid var(--line); }
+  header svg.topo { position: absolute; inset: 0; width: 100%; height: 100%; opacity: .5; }
+  nav { display: flex; justify-content: space-between; align-items: center; padding: 24px 0; position: relative; }
+  nav .mark { font-family: Fraunces, serif; font-weight: 600; font-size: 20px; text-decoration: none; }
+  nav ul { display: flex; gap: 24px; list-style: none; padding: 0; font-size: 14px; }
+  nav ul a { text-decoration: none; color: var(--muted); }
+  nav ul a:hover { color: var(--accent); }
+  .hero { position: relative; padding: 96px 0 120px; }
+  .eyebrow { color: var(--accent); font-size: 13px; letter-spacing: .14em; text-transform: uppercase; font-weight: 600; }
+  h1 { font-family: Fraunces, serif; font-weight: 400; font-size: clamp(42px, 7vw, 76px); line-height: 1.05; margin: 16px 0 24px; max-width: 14ch; }
+  h1 em { color: var(--accent); font-style: italic; }
+  .lede { color: var(--muted); font-size: 19px; max-width: 56ch; }
+  .coords { margin-top: 32px; font: 500 13px ui-monospace, Menlo, monospace; color: var(--accent-2); }
+
+  section { padding: 88px 0; border-bottom: 1px solid var(--line); }
+  h2 { font-family: Fraunces, serif; font-weight: 400; font-size: 36px; margin: 8px 0 40px; }
+
+  .featured { display: grid; grid-template-columns: 1.3fr 1fr; background: var(--bg-2); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; text-decoration: none; transition: border-color .2s; }
+  .featured:hover { border-color: var(--accent); }
+  .featured img { width: 100%; height: 100%; object-fit: cover; min-height: 320px; }
+  .featured .body { padding: 40px; display: flex; flex-direction: column; justify-content: center; gap: 14px; }
+  .featured h3 { font-family: Fraunces, serif; font-size: 32px; font-weight: 600; }
+  .featured p { color: var(--muted); }
+  .tags { display: flex; flex-wrap: wrap; gap: 8px; }
+  .tag { font-size: 12px; padding: 4px 10px; border: 1px solid var(--line); border-radius: 99px; color: var(--muted); }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; margin-top: 20px; }
+  .card { display: flex; flex-direction: column; gap: 10px; padding: 28px; background: var(--bg-2); border: 1px solid var(--line); border-radius: 16px; text-decoration: none; transition: border-color .2s, transform .2s; }
+  .card:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .card .icon { width: 40px; height: 40px; border-radius: 10px; display: grid; place-items: center; background: #1f2a22; color: var(--accent); }
+  .card h3 { font-size: 18px; font-weight: 600; }
+  .card p { color: var(--muted); font-size: 15px; flex: 1; }
+  .card .links { display: flex; gap: 16px; font-size: 14px; color: var(--accent); }
+
+  .about { display: grid; grid-template-columns: 1fr 340px; gap: 56px; align-items: start; }
+  .about p + p { margin-top: 18px; }
+  .about p { color: #c9d1ca; }
+  .about img { width: 100%; border-radius: 16px; border: 1px solid var(--line); }
+  .facts { margin-top: 32px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .facts div { border-top: 1px solid var(--line); padding-top: 12px; }
+  .facts b { display: block; font-family: Fraunces, serif; font-size: 28px; font-weight: 400; color: var(--accent-2); }
+  .facts span { font-size: 13px; color: var(--muted); }
+
+  footer { padding: 56px 0; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 16px; color: var(--muted); font-size: 14px; }
+  footer .links { display: flex; gap: 20px; }
+  footer a { text-decoration: none; }
+  footer a:hover { color: var(--accent); }
+
+  @media (max-width: 760px) {
+    nav ul { display: none; }
+    .featured, .about { grid-template-columns: 1fr; }
+    .featured img { min-height: 220px; }
+    .featured .body { padding: 28px; }
+    .hero { padding: 56px 0 72px; }
+    section { padding: 64px 0; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <svg class="topo" viewBox="0 0 1200 600" preserveAspectRatio="xMidYMid slice" fill="none" stroke="#2a3a2f" stroke-width="1.2">
+    <path d="M700 300c80-120 260-140 340-40s20 240-120 250-300-80-220-210z"/>
+    <path d="M730 300c60-90 210-110 280-30s10 190-100 200-240-70-180-170z"/>
+    <path d="M760 300c45-60 160-80 215-20s5 140-80 150-180-50-135-130z"/>
+    <path d="M790 300c30-35 110-50 150-10s0 90-55 95-125-35-95-85z"/>
+    <path d="M820 300c15-15 60-25 85 0s-5 45-35 45-65-20-50-45z"/>
+    <path d="M560 0c-40 120 60 200 200 160S1000-40 1200 60"/>
+    <path d="M500 0c-40 160 80 260 260 220S1040 0 1200 120"/>
+    <path d="M440 0c-50 200 100 330 330 290s300-180 430-70"/>
+    <path d="M380 600c40-120 200-140 300-80s240 80 520 20"/>
+    <path d="M320 600c60-170 260-190 380-120s240 100 500 30"/>
+  </svg>
+  <div class="wrap">
+    <nav>
+      <a class="mark" href="#">Rob Bolton</a>
+      <ul><li><a href="#projects">Projects</a></li><li><a href="#about">About</a></li><li><a href="https://github.com/bolton">GitHub</a></li></ul>
+    </nav>
+    <div class="hero">
+      <div class="eyebrow">Lake Chelan, Washington</div>
+      <h1>I build small, useful things for <em>people who go outside.</em></h1>
+      <p class="lede">Twenty-plus years in tech, from web development to sales engineering to product management. These days I work in AI, and on the side I tinker with beExploring, a Pacific Northwest trip planner, and publish the open source widgets that grew out of it.</p>
+      <div class="coords">47.89° N, 120.16° W</div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section id="projects">
+    <div class="wrap">
+      <div class="eyebrow">Projects</div>
+      <h2>Things I've made</h2>
+
+      <a class="featured" href="https://www.beexploring.com/">
+        <img src="https://www.beexploring.com/media/img/explore/about/skiing-400.jpg" alt="Skiing in the Valkyr Range, British Columbia">
+        <div class="body">
+          <div class="eyebrow">Featured</div>
+          <h3>beExploring</h3>
+          <p>Trip reports, guides and live conditions for hiking, skiing and camping across the Pacific Northwest. GPS tracks, photos and notes in one place.</p>
+          <div class="tags"><span class="tag">SvelteKit</span><span class="tag">Maps</span><span class="tag">Live data</span></div>
+        </div>
+      </a>
+
+      <div class="grid">
+        <a class="card" href="https://github.com/bolton/nws-forecast-widget">
+          <div class="icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.5 19H9a7 7 0 1 1 6.7-9h1.8a4.5 4.5 0 1 1 0 9z"/></svg></div>
+          <h3>NWS Forecast Widget</h3>
+          <p>A dependency-free web component that shows the National Weather Service forecast for any US lat/lng. No API key, plus a WordPress block.</p>
+          <div class="links"><span>GitHub →</span><span>npm</span></div>
+        </a>
+        <a class="card" href="https://github.com/bolton/wa-campfire-badge">
+          <div class="icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2c1 4 5 6 5 11a5 5 0 0 1-10 0c0-3 2-4 2-7 2 1 3 3 3 5 1-1 1-3 0-9z"/></svg></div>
+          <h3>WA Campfire Badge</h3>
+          <p>Today's campfire and burn ban status for any Washington county, national forest, state park or national park, as an embeddable badge.</p>
+          <div class="links"><span>GitHub →</span><span>Get the snippet</span></div>
+        </a>
+        <a class="card" href="https://www.beexploring.com/tools/">
+          <div class="icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/></svg></div>
+          <h3>Outdoor tools</h3>
+          <p>Mountain weather forecasts, sunrise and sunset, magnetic declination, GPS coordinate converter and a Washington wildfire map.</p>
+          <div class="links"><span>Open tools →</span></div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section id="about">
+    <div class="wrap about">
+      <div>
+        <div class="eyebrow">About</div>
+        <h2>Hi, I'm Rob.</h2>
+        <p>I grew up in Vermont, the first ten years on a sheep farm, and studied economics at UVM. In November 2001 I packed up my car and drove to Snoqualmie Pass to be a ski bum for a year. I was the webmaster for the Summit at Snoqualmie back when that was a real job title, then spent twenty years in Seattle working in tech.</p>
+        <p>Now my wife, son and I live on the shores of Lake Chelan. I ski tour in the winter, hike with the family in summer, and keep trying to relearn mountain biking in the shoulder seasons. I still love tinkering with the web, which is how beExploring and everything on this page happened.</p>
+        <div class="facts">
+          <div><b>20+</b><span>years in tech</span></div>
+          <div><b>2001</b><span>moved west to ski</span></div>
+          <div><b>2021</b><span>started beExploring</span></div>
+        </div>
+      </div>
+      <img src="https://www.beexploring.com/media/img/explore/about/family-400.jpg" alt="Family hike around Mount Rainier">
+    </div>
+  </section>
+</main>
+
+<div class="wrap">
+  <footer>
+    <span>© 2026 Rob Bolton</span>
+    <div class="links">
+      <a href="https://github.com/bolton">GitHub</a>
+      <a href="https://www.beexploring.com/">beExploring</a>
+      <a href="https://linktr.ee/beexploring">Social</a>
+    </div>
+  </footer>
+</div>
+</body>
+</html>
