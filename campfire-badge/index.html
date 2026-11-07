@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WA Campfire Badge · Rob Bolton</title>
+<meta name="description" content="Add today's campfire and burn ban status for a Washington county, national forest, state park or national park to your website.">
+<meta name="theme-color" content="#0f1210">
+<meta property="og:type" content="website">
+<meta property="og:title" content="WA Campfire Badge">
+<meta property="og:description" content="Today's campfire and burn ban status for one place in Washington, as an embeddable badge.">
+<meta property="og:url" content="https://bolton.github.io/campfire-badge/">
+<link rel="canonical" href="https://bolton.github.io/campfire-badge/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230f1210'/%3E%3Cpath d='M4 25 13 10l5 8 3-4 7 11z' fill='%238fd19e'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/site.css">
+<style>
+  .hero { padding: 72px 0 88px; }
+  h1 { max-width: 18ch; }
+  .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; border-radius: 99px; border: 1px solid var(--line); font-size: 15px; font-weight: 500; text-decoration: none; transition: border-color .2s, color .2s; }
+  .btn:hover { border-color: var(--accent); color: var(--accent); }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+  .btn.primary:hover { background: transparent; color: var(--accent); }
+
+  section { padding: 72px 0; }
+  h2 { margin-bottom: 16px; }
+  .intro { color: var(--muted); max-width: 60ch; margin-bottom: 32px; }
+  .intro a, .note a, .terms a { color: var(--accent); }
+
+  .panel { background: var(--bg-2); border: 1px solid var(--line); border-radius: 16px; padding: 28px; display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: start; }
+  label { display: grid; gap: 6px; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+  select { font: 15px Inter, system-ui, sans-serif; color: var(--text); background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 9px 12px; width: 100%; }
+  select:focus { outline: none; border-color: var(--accent); }
+  .legend { display: grid; gap: 8px; margin-top: 24px; font-size: 14px; color: var(--muted); }
+  .legend span { display: flex; align-items: center; gap: 10px; }
+  .legend i { width: 10px; height: 10px; border-radius: 99px; flex: none; }
+
+  .tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 28px; }
+  .tabs button { font: 500 14px Inter, system-ui, sans-serif; color: var(--muted); background: transparent; border: 1px solid var(--line); border-radius: 99px; padding: 7px 16px; cursor: pointer; transition: border-color .2s, color .2s; }
+  .tabs button:hover { color: var(--accent); border-color: var(--accent); }
+  .tabs button[aria-selected='true'] { color: var(--bg); background: var(--accent); border-color: var(--accent); }
+  .code { position: relative; margin-top: 16px; }
+  pre { overflow-x: auto; padding: 16px 72px 16px 18px; border-radius: 12px; background: var(--bg); border: 1px solid var(--line); font: 13px/1.6 ui-monospace, Menlo, monospace; color: var(--accent-2); white-space: pre-wrap; word-break: break-all; margin: 0; }
+  .copy { position: absolute; top: 8px; right: 8px; font: 12px Inter, system-ui, sans-serif; color: var(--muted); background: var(--bg-2); border: 1px solid var(--line); border-radius: 8px; padding: 4px 10px; cursor: pointer; }
+  .copy:hover { color: var(--accent); border-color: var(--accent); }
+  .note { color: var(--muted); font-size: 15px; margin-top: 16px; }
+
+  .split { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: start; }
+  .split pre { padding-right: 18px; }
+  .terms { max-width: 64ch; color: #c9d1ca; }
+  .terms p + p { margin-top: 16px; }
+
+  /* The site's own palette, applied to every badge on this page. */
+  wa-campfire-status {
+    --wcs-bg: var(--bg);
+    --wcs-fg: var(--text);
+    --wcs-muted: var(--muted);
+    --wcs-border: var(--line);
+    --wcs-font: Inter, system-ui, sans-serif;
+    --wcs-none: #6fc283;
+    --wcs-restricted: var(--accent-2);
+    --wcs-banned: #e5735f;
+    --wcs-unknown: var(--muted);
+  }
+  wa-campfire-status a { color: var(--accent); font-size: 14px; }
+  wa-campfire-status.paper a { color: #b5651d; }
+  wa-campfire-status.paper {
+    --wcs-bg: #f4efe4;
+    --wcs-fg: #1d2420;
+    --wcs-muted: #6b6a5f;
+    --wcs-border: #ddd3bf;
+    --wcs-radius: 4px;
+    --wcs-font: Fraunces, Georgia, serif;
+    --wcs-none: #3f7d4e;
+    --wcs-restricted: #b5651d;
+    --wcs-banned: #a83a2a;
+  }
+
+  @media (max-width: 760px) {
+    .panel, .split { grid-template-columns: 1fr; }
+    .panel { padding: 20px; }
+    .hero { padding: 48px 0 64px; }
+    section { padding: 56px 0; }
+  }
+</style>
+<script type="module" src="https://cdn.jsdelivr.net/npm/wa-campfire-badge@0.1.0/src/index.js"></script>
+</head>
+<body>
+<header>
+  <img class="topo" src="/assets/topo.svg" alt="">
+  <div class="wrap">
+    <nav>
+      <a class="mark" href="/">Rob Bolton</a>
+      <ul><li><a href="/#projects">Projects</a></li><li><a href="/#about">About</a></li><li><a href="https://github.com/bolton/wa-campfire-badge">GitHub</a></li></ul>
+    </nav>
+    <div class="hero">
+      <div class="eyebrow">Open source · Embeddable badge</div>
+      <h1>WA Campfire <em>Badge</em></h1>
+      <p class="lede">Today's campfire and burn ban status for one place in Washington, on your website. Free, and updated daily from agency notices by beExploring.</p>
+      <div class="actions">
+        <a class="btn primary" href="#try">Get the snippet</a>
+        <a class="btn" href="https://github.com/bolton/wa-campfire-badge">GitHub</a>
+        <a class="btn" href="https://www.npmjs.com/package/wa-campfire-badge">npm</a>
+        <a class="btn" href="https://github.com/bolton/wa-campfire-badge/releases">WordPress plugin</a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section id="try">
+    <div class="wrap">
+      <div class="eyebrow">Live</div>
+      <h2>Pick your place</h2>
+      <p class="intro">Every county, national forest, state park and national park in Washington. Choose one, then copy the code for your site.</p>
+
+      <div class="panel">
+        <div>
+          <label for="place">Place</label>
+          <select id="place" disabled><option>Loading places…</option></select>
+          <div class="legend">
+            <span><i style="background:#6fc283"></i>No restrictions</span>
+            <span><i style="background:var(--accent-2)"></i>Restricted, such as campfires only in designated rings</span>
+            <span><i style="background:#e5735f"></i>Burn ban</span>
+          </div>
+        </div>
+        <wa-campfire-status id="badge" place="county/chelan"><a href="https://www.beexploring.com/explore/washington-state/campfire-restrictions/">Washington campfire restrictions</a></wa-campfire-status>
+      </div>
+
+      <div class="tabs" role="tablist">
+        <button role="tab" aria-selected="true" data-tab="script">Script tag</button>
+        <button role="tab" aria-selected="false" data-tab="wordpress">WordPress</button>
+        <button role="tab" aria-selected="false" data-tab="iframe">Iframe</button>
+      </div>
+      <div class="code">
+        <pre id="snippet"></pre>
+        <button class="copy">Copy</button>
+      </div>
+      <p class="note" id="note"></p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="eyebrow">Theming</div>
+      <h2>Make it match your site</h2>
+      <p class="intro">The badges on this page use CSS custom properties to pick up the site's colors and fonts. Here's a lighter take for Mount Rainier.</p>
+      <div class="split">
+        <wa-campfire-status class="paper" place="national-park/mount-rainier"><a href="https://www.beexploring.com/explore/washington-state/campfire-restrictions/">Washington campfire restrictions</a></wa-campfire-status>
+        <pre>wa-campfire-status {
+  --wcs-bg: #f4efe4;
+  --wcs-fg: #1d2420;
+  --wcs-muted: #6b6a5f;
+  --wcs-border: #ddd3bf;
+  --wcs-radius: 4px;
+  --wcs-font: Fraunces, serif;
+  --wcs-none: #3f7d4e;
+  --wcs-restricted: #b5651d;
+  --wcs-banned: #a83a2a;
+}</pre>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="eyebrow">Terms</div>
+      <h2>One condition</h2>
+      <div class="terms">
+        <p>The badge is free to use on any site, as long as the credit link to <a href="https://www.beexploring.com/explore/washington-state/campfire-restrictions/">Washington campfire restrictions</a> stays visible next to it. Without the link, the badge shows no status.</p>
+        <p>The data comes from agency notices and can be late or wrong. The agency's own notice is what counts. Read the <a href="https://www.beexploring.com/tools/campfire-badge/">full terms on beexploring.com</a>.</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="wrap">
+  <footer>
+    <span>© 2026 Rob Bolton · Not affiliated with any agency</span>
+    <div class="links">
+      <a href="/">Home</a>
+      <a href="https://github.com/bolton/wa-campfire-badge">GitHub</a>
+      <a href="https://www.beexploring.com/">beExploring</a>
+    </div>
+  </footer>
+</div>
+
+<script type="module">
+  import { listPlaces } from 'https://cdn.jsdelivr.net/npm/wa-campfire-badge@0.1.0/src/index.js';
+
+  const VERSION = '0.1.0';
+  const CREDIT = 'https://www.beexploring.com/explore/washington-state/campfire-restrictions/';
+  const PAGES = 'https://bolton.github.io/wa-campfire-badge/embed/';
+  const KIND = { county: 'Counties', forest: 'National forests', 'state-park': 'State parks', 'national-park': 'National parks' };
+
+  const select = document.getElementById('place');
+  const badge = document.getElementById('badge');
+  const snippet = document.getElementById('snippet');
+  const note = document.getElementById('note');
+  let tab = 'script';
+
+  function snippets(id, name) {
+    const link = `<a href="${CREDIT}">Washington campfire restrictions</a>`;
+    return {
+      script: {
+        code: `<script type="module" src="https://cdn.jsdelivr.net/npm/wa-campfire-badge@${VERSION}/src/index.js"><\/script>\n<wa-campfire-status place="${id}">\n  ${link}\n</wa-campfire-status>`,
+        note: 'Paste anywhere your site allows HTML with scripts: Squarespace, Webflow, Ghost, Shopify or plain HTML.'
+      },
+      wordpress: {
+        code: `[wa_campfire place="${id}"]`,
+        note: 'Install the plugin zip from GitHub Releases, then add the shortcode or the "Campfire status" block.'
+      },
+      iframe: {
+        code: `<iframe src="${PAGES}?place=${encodeURIComponent(id)}" title="Campfire status, ${name}" loading="lazy" style="width:100%;max-width:420px;height:220px;border:0"></iframe>\n<p>${link}</p>`,
+        note: 'For Wix, Google Sites and Notion. Keep the link below the iframe: a link inside an iframe does not count as the credit.'
+      }
+    };
+  }
+
+  function render() {
+    const id = select.value || badge.getAttribute('place');
+    const name = select.selectedOptions[0]?.textContent ?? id;
+    const s = snippets(id, name)[tab];
+    snippet.textContent = s.code;
+    note.textContent = s.note;
+  }
+
+  document.querySelectorAll('[data-tab]').forEach((button) =>
+    button.addEventListener('click', () => {
+      tab = button.dataset.tab;
+      document.querySelectorAll('[data-tab]').forEach((b) => b.setAttribute('aria-selected', String(b === button)));
+      render();
+    })
+  );
+
+  select.addEventListener('change', () => {
+    badge.setAttribute('place', select.value);
+    render();
+  });
+
+  document.querySelector('.copy').addEventListener('click', async (event) => {
+    const button = event.currentTarget;
+    try {
+      await navigator.clipboard.writeText(snippet.textContent);
+      button.textContent = 'Copied';
+    } catch {
+      getSelection().selectAllChildren(snippet);
+      button.textContent = 'Selected';
+    }
+    setTimeout(() => (button.textContent = 'Copy'), 1500);
+  });
+
+  try {
+    const places = await listPlaces();
+    select.innerHTML = '';
+    for (const [kind, label] of Object.entries(KIND)) {
+      const group = document.createElement('optgroup');
+      group.label = label;
+      for (const p of places.filter((p) => p.kind === kind)) {
+        group.append(new Option(p.name, p.id, false, p.id === 'county/chelan'));
+      }
+      select.append(group);
+    }
+    select.disabled = false;
+  } catch {
+    select.innerHTML = '<option>Place list unavailable</option>';
+  }
+  render();
+</script>
+</body>
+</html>
