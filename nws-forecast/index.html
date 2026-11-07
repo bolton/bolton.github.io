@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NWS Forecast Widget · Rob Bolton</title>
+<meta name="description" content="A dependency-free web component that shows the National Weather Service forecast for any US latitude and longitude. Live demo and embed code.">
+<meta name="theme-color" content="#0f1210">
+<meta property="og:type" content="website">
+<meta property="og:title" content="NWS Forecast Widget">
+<meta property="og:description" content="A National Weather Service forecast for any US latitude and longitude. One script tag, no API key.">
+<meta property="og:url" content="https://bolton.github.io/nws-forecast/">
+<link rel="canonical" href="https://bolton.github.io/nws-forecast/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230f1210'/%3E%3Cpath d='M4 25 13 10l5 8 3-4 7 11z' fill='%238fd19e'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/site.css">
+<style>
+  .hero { padding: 72px 0 88px; }
+  h1 { max-width: 18ch; }
+  .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; border-radius: 99px; border: 1px solid var(--line); font-size: 15px; font-weight: 500; text-decoration: none; transition: border-color .2s, color .2s; }
+  .btn:hover { border-color: var(--accent); color: var(--accent); }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+  .btn.primary:hover { background: transparent; color: var(--accent); }
+  .install { margin-top: 32px; max-width: 640px; }
+
+  section { padding: 72px 0; }
+  h2 { margin-bottom: 16px; }
+  .intro { color: var(--muted); max-width: 60ch; margin-bottom: 32px; }
+  .intro a, .note a { color: var(--accent); }
+
+  .panel { background: var(--bg-2); border: 1px solid var(--line); border-radius: 16px; padding: 28px; }
+  form { display: flex; flex-wrap: wrap; gap: 12px 16px; align-items: end; }
+  label { display: grid; gap: 6px; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+  input, select { font: 15px Inter, system-ui, sans-serif; color: var(--text); background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 9px 12px; }
+  input { width: 9em; }
+  input:focus, select:focus { outline: none; border-color: var(--accent); }
+  form button { font: 600 15px Inter, system-ui, sans-serif; color: var(--bg); background: var(--accent); border: 1px solid var(--accent); border-radius: 10px; padding: 9px 18px; cursor: pointer; }
+  form button:hover { background: #a6dcb2; }
+  .presets { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+  .presets button { font: 13px Inter, system-ui, sans-serif; color: var(--muted); background: transparent; border: 1px solid var(--line); border-radius: 99px; padding: 5px 12px; cursor: pointer; transition: border-color .2s, color .2s; }
+  .presets button:hover { border-color: var(--accent); color: var(--accent); }
+  .live { margin-top: 28px; }
+
+  .code { position: relative; margin-top: 20px; }
+  .code pre { padding-right: 72px; }
+  .code .label { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 600; margin-bottom: 8px; }
+  pre { overflow-x: auto; padding: 16px 18px; border-radius: 12px; background: var(--bg); border: 1px solid var(--line); font: 13px/1.6 ui-monospace, Menlo, monospace; color: var(--accent-2); white-space: pre; }
+  .copy { position: absolute; top: 30px; right: 8px; font: 12px Inter, system-ui, sans-serif; color: var(--muted); background: var(--bg-2); border: 1px solid var(--line); border-radius: 8px; padding: 4px 10px; cursor: pointer; }
+  .copy:hover { color: var(--accent); border-color: var(--accent); }
+  .note { color: var(--muted); font-size: 15px; margin-top: 20px; }
+
+  .split { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: start; }
+  .split pre { margin: 0; }
+  iframe { display: block; width: 100%; height: 280px; border: 0; border-radius: 12px; }
+  .narrow { max-width: 320px; }
+
+  /* The site's own palette, applied to every widget on this page. */
+  nws-forecast {
+    --nws-bg: var(--bg);
+    --nws-fg: var(--text);
+    --nws-muted: var(--muted);
+    --nws-accent: var(--accent);
+    --nws-border: var(--line);
+    --nws-font: Inter, system-ui, sans-serif;
+  }
+  nws-forecast.paper {
+    --nws-bg: #f4efe4;
+    --nws-fg: #1d2420;
+    --nws-muted: #6b6a5f;
+    --nws-accent: #b5651d;
+    --nws-border: #ddd3bf;
+    --nws-radius: 4px;
+    --nws-font: Fraunces, Georgia, serif;
+  }
+
+  @media (max-width: 760px) {
+    .split { grid-template-columns: 1fr; }
+    .panel { padding: 20px; }
+    .hero { padding: 48px 0 64px; }
+    section { padding: 56px 0; }
+  }
+</style>
+<script type="module" src="https://cdn.jsdelivr.net/npm/nws-forecast-widget@0.1.1/src/index.js"></script>
+</head>
+<body>
+<header>
+  <img class="topo" src="/assets/topo.svg" alt="">
+  <div class="wrap">
+    <nav>
+      <a class="mark" href="/">Rob Bolton</a>
+      <ul><li><a href="/#projects">Projects</a></li><li><a href="/#about">About</a></li><li><a href="https://github.com/bolton/nws-forecast-widget">GitHub</a></li></ul>
+    </nav>
+    <div class="hero">
+      <div class="eyebrow">Open source · Web component</div>
+      <h1>NWS Forecast <em>Widget</em></h1>
+      <p class="lede">A National Weather Service forecast for any US latitude and longitude. One script tag, no API key, no build step, no framework. Data comes straight from api.weather.gov.</p>
+      <div class="actions">
+        <a class="btn primary" href="#try">Try it</a>
+        <a class="btn" href="https://github.com/bolton/nws-forecast-widget">GitHub</a>
+        <a class="btn" href="https://www.npmjs.com/package/nws-forecast-widget">npm</a>
+        <a class="btn" href="https://github.com/bolton/nws-forecast-widget/releases">WordPress plugin</a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section id="try">
+    <div class="wrap">
+      <div class="eyebrow">Live</div>
+      <h2>Try it anywhere in the US</h2>
+      <p class="intro">Pick a place or type coordinates. The embed code below updates to match, ready to paste.</p>
+
+      <div class="panel">
+        <form id="controls">
+          <label>Latitude <input name="lat" value="47.6062" inputmode="decimal"></label>
+          <label>Longitude <input name="lng" value="-122.3321" inputmode="decimal"></label>
+          <label>Days
+            <select name="days"><option>3</option><option selected>5</option><option>7</option></select>
+          </label>
+          <label>Units
+            <select name="units"><option value="us">°F</option><option value="si">°C</option></select>
+          </label>
+          <button>Show forecast</button>
+        </form>
+        <div class="presets">
+          <button data-lat="47.6062" data-lng="-122.3321">Seattle</button>
+          <button data-lat="47.8435" data-lng="-120.0167">Lake Chelan</button>
+          <button data-lat="46.8523" data-lng="-121.7603">Mount Rainier</button>
+          <button data-lat="39.7392" data-lng="-104.9903">Denver</button>
+          <button data-lat="25.7617" data-lng="-80.1918">Miami</button>
+          <button data-lat="51.5072" data-lng="-0.1276">London (outside coverage)</button>
+        </div>
+        <nws-forecast class="live" id="live" lat="47.6062" lng="-122.3321" days="5"></nws-forecast>
+      </div>
+
+      <div class="code">
+        <div class="label">Script tag</div>
+        <pre id="snippet"></pre>
+        <button class="copy" data-copy="snippet">Copy</button>
+      </div>
+      <div class="code">
+        <div class="label">Iframe</div>
+        <pre id="iframe-snippet"></pre>
+        <button class="copy" data-copy="iframe-snippet">Copy</button>
+      </div>
+      <p class="note">Site builder that strips script tags, like Wix, Google Sites or Notion? Use the iframe instead. There are <a href="https://github.com/bolton/nws-forecast-widget/blob/main/docs/platforms.md">install guides for each platform</a>.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="eyebrow">Theming</div>
+      <h2>Make it match your site</h2>
+      <p class="intro">Every widget on this page uses CSS custom properties to pick up the site's colors and fonts. Here's a lighter take for Snoqualmie Pass.</p>
+      <div class="split">
+        <nws-forecast class="paper" lat="47.5301" lng="-121.4141" days="4" heading="Snoqualmie Pass"></nws-forecast>
+        <pre>nws-forecast {
+  --nws-bg: #f4efe4;
+  --nws-fg: #1d2420;
+  --nws-muted: #6b6a5f;
+  --nws-accent: #b5651d;
+  --nws-border: #ddd3bf;
+  --nws-radius: 4px;
+  --nws-font: Fraunces, serif;
+}</pre>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="eyebrow">Iframe embed</div>
+      <h2>No script tag needed</h2>
+      <p class="intro">The hosted embed page takes the same options as URL parameters, plus <code>heading</code> and <code>theme=light|dark|auto</code>.</p>
+      <iframe src="https://bolton.github.io/nws-forecast-widget/embed/?lat=44.0582&lng=-121.3153&days=4&heading=Bend%2C%20OR&theme=dark" title="Weather forecast for Bend, OR" loading="lazy"></iframe>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="eyebrow">Responsive</div>
+      <h2>Fits a sidebar, too</h2>
+      <p class="intro">The layout follows its container, not the window, so it works in narrow columns. Leavenworth, with the attribution turned off.</p>
+      <div class="narrow">
+        <nws-forecast lat="47.5962" lng="-120.6615" days="4" no-attribution></nws-forecast>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="wrap">
+  <footer>
+    <span>© 2026 Rob Bolton · Not affiliated with NWS or NOAA</span>
+    <div class="links">
+      <a href="/">Home</a>
+      <a href="https://github.com/bolton/nws-forecast-widget">GitHub</a>
+      <a href="https://www.beexploring.com/">beExploring</a>
+    </div>
+  </footer>
+</div>
+
+<script type="module">
+  const VERSION = '0.1.1';
+  const live = document.getElementById('live');
+  const form = document.getElementById('controls');
+  const snippet = document.getElementById('snippet');
+  const iframeSnippet = document.getElementById('iframe-snippet');
+
+  function apply() {
+    const data = new FormData(form);
+    for (const name of ['lat', 'lng', 'days', 'units']) live.setAttribute(name, data.get(name));
+    const units = data.get('units') === 'si' ? ' units="si"' : '';
+    snippet.textContent =
+      `<script type="module" src="https://cdn.jsdelivr.net/npm/nws-forecast-widget@${VERSION}/src/index.js"><\/script>\n` +
+      `<nws-forecast lat="${data.get('lat')}" lng="${data.get('lng')}" days="${data.get('days')}"${units}></nws-forecast>`;
+    const query = new URLSearchParams({ lat: data.get('lat'), lng: data.get('lng'), days: data.get('days') });
+    if (data.get('units') === 'si') query.set('units', 'si');
+    iframeSnippet.textContent =
+      `<iframe src="https://bolton.github.io/nws-forecast-widget/embed/?${query}"\n` +
+      `  title="Weather forecast" loading="lazy" style="width:100%;height:280px;border:0"></iframe>`;
+  }
+
+  form.addEventListener('submit', (event) => { event.preventDefault(); apply(); });
+  document.querySelectorAll('.presets button').forEach((button) =>
+    button.addEventListener('click', () => {
+      form.lat.value = button.dataset.lat;
+      form.lng.value = button.dataset.lng;
+      apply();
+    })
+  );
+  document.querySelectorAll('.copy').forEach((button) =>
+    button.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(document.getElementById(button.dataset.copy).textContent);
+        button.textContent = 'Copied';
+      } catch {
+        getSelection().selectAllChildren(document.getElementById(button.dataset.copy));
+        button.textContent = 'Selected';
+      }
+      setTimeout(() => (button.textContent = 'Copy'), 1500);
+    })
+  );
+  apply();
+</script>
+</body>
+</html>
